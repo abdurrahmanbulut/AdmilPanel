@@ -1,0 +1,18 @@
+form{
+    width: auto;
+    height: auto;
+    margin-top: 2rem;
+    padding: 5rem;
+    background-color: white;
+    border-radius: 2rem;
+}
+.white-box{
+    width: auto;
+    height: auto;
+    background-color: white;
+    border-radius: 2rem;
+    padding: 5rem;
+}
+.primary-color{
+    height: 100vh; background-color: rgb(255, 175, 2); 
+}
