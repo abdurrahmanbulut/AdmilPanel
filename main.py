@@ -2,70 +2,99 @@ import json
 import os
 import pyrebase
 import requests
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, flash, url_for, redirect, logging
+from functools import wraps
+from wtforms import Form, StringField, TextAreaField, PasswordField, validators
 
+
+def login_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        if 'logged_in' in session:
+            return f(*args, **kwargs)
+        else:
+            flash("You need to login first")
+            return redirect(url_for('login'))
+
+    return wrap
+
+
+class LoginForm(Form):
+    username = StringField("Mail")
+    password = PasswordField("Password")
 
 
 firebaseConfig = {
-    'apiKey': os.environ['FIREBASE_API_KEY'],
+    'apiKey': "AIzaSyCTHK16qs1kP5O2I6GdNHV3IrAbZZj7DqA",
     'authDomain': "groceryadmin-5ac5b.firebaseapp.com",
+    'databaseURL': "https://groceryadmin-5ac5b-default-rtdb.firebaseio.com",
     'projectId': "groceryadmin-5ac5b",
     'storageBucket': "groceryadmin-5ac5b.appspot.com",
     'messagingSenderId': "281965995985",
-    'appId': "1:281965995985:web:8e912b06c143a2d94362f0",
-    'databaseURL': "https://groceryadmin-5ac5b-default-rtdb.firebaseio.com/"
+    'appId': "1:281965995985:web:8e912b06c143a2d94362f0"
 }
 
 firebase = pyrebase.initialize_app(firebaseConfig)
 auth = firebase.auth()
 
 app = Flask(__name__)
+app.secret_key = 'gtusoftwaregroceryapp'
 
 
-@app.route('/create_account', methods=['GET', 'POST'])
-def create_account():
-    if request.method == "POST":
-        pwd = request.form['user_pwd']
-        pwd_check = request.form['user_pwd_check']
-        if pwd == pwd_check:
-            try:
-                email = request.form['user_mail']
-                password = request.form['user_pwd']
-                new_user = auth.create_user_with_email_and_password(email, password)
-                auth.send_email_verification(new_user['idToken'])
-                return render_template('verify_email.html')
-
-            except :
-                existing_account = "This email already used"
-                # if requests.exceptions.HTTPError:
-                 # existing_account = "Email is wrong or password is weak"
-                return render_template('create_account.html', exist_message=existing_account)
-        else:
-            return render_template('create_account.html', psw_not_match="Passwords did not match!")
-
-    return render_template('create_account.html')
-
-
-@app.route('/', methods=['GET', 'POST'])
+@app.route("/")
 def index():
+    return render_template("index.html")
+
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+
+@app.route("/dashboard")
+@login_required
+def dashboard():
+    return render_template("dashboard.html")
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    form = LoginForm(request.form)
     if request.method == 'POST':
-        email = request.form['user_email']
-        password = request.form['user_pwd']
+        email = form.username.data
+        password = form.password.data
         try:
             auth.sign_in_with_email_and_password(email, password)
-            user_info = auth.sign_in_with_email_and_password(email, password)
-            account_info = auth.get_account_info(user_info['idToken'])
-            if not account_info['user'][0]['emailVerified']:
-                verify_message = 'Please verify your email'
-                return render_template('index.html', umessage = verify_message)
-            else:
-                return render_template('home.html')
+            session['logged_in'] = True
+            flash("You are at home")
+            return redirect(url_for("dashboard"))
         except:
-            unsuccessful = 'Please check your credential'
-            return render_template('index.html', umessage = unsuccessful)
+            flash("Invalid email or password")
+            return redirect(url_for("login"))
 
-    return render_template('index.html')
+    return render_template('login.html', form=form)
+
+
+@app.route("/logout")
+def logout():
+    session.pop('logged_in', None)
+    flash("Good bye!")
+    return redirect(url_for("index"))
+
+
+@app.route("/reset_password", methods=['GET', 'POST'])
+def reset_password():
+    if request.method == 'POST':
+        email = request.form['user_email']
+        try:
+            auth.send_password_reset_email(email)
+            flash("Mail sent successfully")
+            return redirect(url_for('dashboard'))
+        except:
+            flash("Who are you?")
+            render_template("reset_password.html")
+    return render_template("reset_password.html")
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
