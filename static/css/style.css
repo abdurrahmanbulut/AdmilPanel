@@ -3,7 +3,7 @@ form{
     height: auto;
     margin-top: 2rem;
     padding: 5rem;
-    background-color: white;
+    background-color: #FFBF00;
     border-radius: 2rem;
 }
 .white-box{
@@ -14,5 +14,8 @@ form{
     padding: 5rem;
 }
 .primary-color{
-    height: 100vh; background-color: rgb(255, 175, 2); 
+    height: 100vh; background-color: white;
+}
+#back-img{
+    background-image: url("https://images.pexels.com/photos/7799685/pexels-photo-7799685.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940");
 }
