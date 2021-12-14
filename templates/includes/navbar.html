@@ -1,0 +1,52 @@
+
+<nav class="navbar navbar-light  " style="background-color: #ffcc00;">
+    <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+
+    </button>
+    <a class="navbar-brand" href="/">
+        <button type="button" class="btn btn-secondary">Grocery App</button>
+        </a>
+    
+    <div class="collapse navbar-collapse " id="navbarCollapse">
+      <ul class="navbar-nav ml-auto ">
+
+          {% if session["logged_in"] %}
+          <li class="nav-item active">
+
+              <a class="nav-link" href="/dashboard">
+                  <button type="button" class="btn btn-secondary">Admin Panel</button>
+              </a>
+            </li>
+          <li class="nav-item active">
+
+          <a class="nav-link" href="/about">
+              <button type="button" class="btn btn-secondary">About</button>
+          </a>
+        </li>
+          <li class="nav-item active">
+              <a class="nav-link" href="/logout">
+                  <button type="button" class="btn btn-secondary">Log out</button>
+              </a>
+            </li>
+            
+          {% else %}
+          <li class="nav-item active">
+              <a class="nav-link" href="/about">
+              <button type="button" class="btn btn-secondary">About</button>
+          </a>
+        </li>
+          <li class="nav-item active">
+
+              <a class="nav-link" href="/login">
+                  <button type="button" class="btn btn-secondary">Log in</button>
+              </a>
+            </li>
+
+          {% endif %}
+        
+        </ul>
+    </div>
+
+
+  </nav>

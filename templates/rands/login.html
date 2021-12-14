@@ -4,31 +4,43 @@
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="/static/css/style.css">
+
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
-
-    <title>Reset your password</title>
+    <link rel="stylesheet" href="static/css/style.css">
+    <title>Welcome</title>
   </head>
   <body>
 
-	<div class="primary-color d-flex flex-column justify-content-center align-items-center">
-      <div class="form d-flex flex-column" >
-
-            <form style="background:url(https://images.pexels.com/photos/5695888/pexels-photo-5695888.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940); background-size: cover;" action="/reset_password" method="post">
-                <h4 class="text-center"> We'll send you an email </h4>
-                <br> <br>
+    <div class="primary-color d-flex flex-column justify-content-center align-items-center">
+        <h3>Grocery Admin Panel | SIGN IN</h3>
+        <div class="form d-flex flex-column">
+            {% if umessage %}
+            <div class="alert alert-danger">
+                <center>
+                    {{ umessage }}
+                </center>
+            </div>
+            {% endif %}
+            <form action="">
                 <div class="form-group">
-                    <input name="user_email" class="form-control form-control-lg" placeholder="Enter email" type="text">
+                    <input _ngcontent-c0="" class="form-control form-control-lg" placeholder="User email" type="text">
                 </div>
-                <br>
                 <div class="form-group">
-                    <button class="bg-warning btn btn-info btn-lg btn-block">Send</button>
+                    <input class="form-control form-control-lg" placeholder="Password" type="password">
                 </div>
-                {% include "includes/messages.html" %}
-            </form>
+                <div class="form-group">
+                    <button class="bg-warning btn btn-info btn-lg btn-block">Sign In</button>
+                </div>
+                <div class="form-group">
+                    <button class="bg-warning btn btn-primary btn-sm">Forgot password</button>
+                    <a class="bg-warning  btn btn-secondary btn-sm" href="/create_account">Signup</a>
+                </div>
+            </form>  
         </div>
     </div>
+   
+	
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
