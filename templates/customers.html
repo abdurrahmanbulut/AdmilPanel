@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+
+{% block body %}
+
+<link rel="stylesheet" href="/static/css/style.css">
+
+<h3>Customers</h3>
+<small>You can edit customer informations in here</small>
+<hr>
+
+<ul>
+    <table>
+  <tr>
+    <th>image</th>
+    <th>name</th>
+    <th>email</th>
+    <th>password</th>
+    <th>phone number</th>
+  </tr>
+{% for item in data %}
+
+  <tr>
+      <td> {% if item.image != "" %}  <img src="{{item.image}}">
+            {% else %}  <img src="/static/image/anonymous.png">
+            {% endif %}
+      </td>
+      <td> {% if item.name != "" %} {{item.name}}
+            {% else %} Anonymous
+            {% endif %}
+      </td>
+      <td>{{item.email}}</td>
+      <td>{{item.password}}</td>
+      <td>{% if item.phone_number != "" %} {{item.phone_number}}
+          {% else %}   null
+          {% endif %}
+      </td>
+  </tr>
+
+{% endfor %}
+</table>
+</ul>
+
+<footer class="footer">
+      <div>
+        <span>Grocery app official</span>
+          <span>&#174;</span>
+      </div>
+</footer>
+
+{% endblock body %}
+
