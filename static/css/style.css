@@ -19,3 +19,26 @@ form{
 #back-img{
     background-image: url("https://images.pexels.com/photos/7799685/pexels-photo-7799685.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940");
 }
+img{
+    width: 4rem;
+    height: 4rem;
+}
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+td, th {
+  border: 1px solid #dddddd;
+  text-align: center;
+  padding: 2px;
+}
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+.footer div{
+display: flex;
+justify-content: end;
+margin-top: 2rem;
+    height: 3rem;
+}

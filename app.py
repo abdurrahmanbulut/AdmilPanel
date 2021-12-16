@@ -1,10 +1,7 @@
-import json
-import os
 import pyrebase
-import requests
-from flask import Flask, render_template, request, session, flash, url_for, redirect, logging
+from flask import Flask, render_template, request, session, flash, url_for, redirect
 from functools import wraps
-from wtforms import Form, StringField, TextAreaField, PasswordField, validators
+from wtforms import Form, StringField, PasswordField
 
 
 def login_required(f):
@@ -17,6 +14,15 @@ def login_required(f):
             return redirect(url_for('login'))
 
     return wrap
+
+
+class Person:
+    def __init__(self, name, email, password, phone_number, image):
+        self.name = name
+        self.email = email
+        self.password = password
+        self.phone_number = phone_number
+        self.image = image
 
 
 class LoginForm(Form):
@@ -34,7 +40,30 @@ firebaseConfig = {
     'appId': "1:281965995985:web:8e912b06c143a2d94362f0"
 }
 
+# web
+firebaseConfigWeb = {
+    'apiKey': "AIzaSyAQdY2VV4QOR_7zGT1PpB1jMRLNKXEB19w",
+    'authDomain': "high-lacing-330220.firebaseapp.com",
+    'databaseURL': "https://high-lacing-330220-default-rtdb.firebaseio.com",
+    'projectId': "high-lacing-330220",
+    'storageBucket': "high-lacing-330220.appspot.com",
+    'messagingSenderId': "41516160651",
+    'appId': "1:41516160651:web:d9fd0340582463b28f268e",
+    'measurementId': "G-MGZZQ54S74"
+}
+
 firebase = pyrebase.initialize_app(firebaseConfig)
+firebaseWeb = pyrebase.initialize_app(firebaseConfigWeb)
+db = firebaseWeb.database()
+
+user_list = []
+product_list = []
+
+users = db.child("users").get()
+for user in users.each():
+    user_list.append(Person(user.val()['name'], user.val()['email'], user.val()['password'], user.val()['phoneNumber'], user.val()['image']))
+
+
 auth = firebase.auth()
 
 app = Flask(__name__)
@@ -55,6 +84,26 @@ def about():
 @login_required
 def dashboard():
     return render_template("dashboard.html")
+
+
+@app.route("/customers")
+@login_required
+def customers():
+    return render_template("customers.html", data=user_list)
+
+
+@app.route("/products")
+@login_required
+def products():
+    return render_template("products.html", data=product_list)
+
+
+# will be updated for adding and deleting user
+# @app.route("/dashboard", methods=['POST'])
+# @login_required
+# def dashboard2():
+#     print(23)
+#     return render_template("dashboard.html")
 
 
 @app.route('/login', methods=['GET', 'POST'])
