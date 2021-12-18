@@ -74,6 +74,9 @@ app.secret_key = 'gtusoftwaregroceryapp'
 def index():
     return render_template("index.html")
 
+@app.route("/")
+def send_message():
+    return "sent"
 
 @app.route("/about")
 def about():
