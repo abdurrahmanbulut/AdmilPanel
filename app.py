@@ -17,13 +17,15 @@ def login_required(f):
 
 
 class Person:
-    def __init__(self, name, email, password, phone_number, image):
+    def __init__(self, name, email, password, phone_number, image, type, uid, key):
         self.name = name
         self.email = email
         self.password = password
         self.phone_number = phone_number
         self.image = image
-
+        self.type = type
+        self.uid = uid
+        self.key = key
 
 class LoginForm(Form):
     username = StringField("Mail")
@@ -59,10 +61,16 @@ db = firebaseWeb.database()
 user_list = []
 product_list = []
 
-users = db.child("users").get()
-for user in users.each():
-    user_list.append(Person(user.val()['name'], user.val()['email'], user.val()['password'], user.val()['phoneNumber'], user.val()['image']))
+print(db.child("users").get())
 
+def refreshUsers(db):
+    users_list = []
+    users = db.child("users").get()
+    for user in users.each():
+        users_list.append(Person(user.val()['name'], user.val()['email'], user.val()['password'], user.val()['phoneNumber'], user.val()['image'], user.val()['type'], user.val()['uid'], user.key()))
+    return users_list
+
+user_list = refreshUsers(db)
 
 auth = firebase.auth()
 
@@ -89,24 +97,10 @@ def dashboard():
     return render_template("dashboard.html")
 
 
-@app.route("/customers")
-@login_required
-def customers():
-    return render_template("customers.html", data=user_list)
-
-
 @app.route("/products")
 @login_required
 def products():
     return render_template("products.html", data=product_list)
-
-
-# will be updated for adding and deleting user
-# @app.route("/dashboard", methods=['POST'])
-# @login_required
-# def dashboard2():
-#     print(23)
-#     return render_template("dashboard.html")
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -146,6 +140,73 @@ def reset_password():
             flash("Who are you?")
             render_template("reset_password.html")
     return render_template("reset_password.html")
+
+
+
+@app.route("/customers")
+@login_required
+def customers():
+    user_list = refreshUsers(db)
+    return render_template("customers.html", data=user_list)
+
+
+
+@app.route("/ajax_add",methods=["POST","GET"])
+def ajax_add():
+    if request.method == 'POST':
+        txtname = request.form['txtname']
+        txtemail = request.form['txtemail']
+        txtpassword = request.form['txtpassword']
+        txtphone = request.form['txtphone']
+        txtimage = request.form['txtimage']
+        txttype = request.form['txttype']
+        if txttype == "cashier" or "Cashier": txttype_no = 1
+        elif txttype == "Costumer" or "costumer" or "Customer" or "customer": txttype_no = 0 
+        
+        if txtname == '':
+            msg = 'Please Input name'  
+        else:        
+            data = {'name':txtname, 'email':txtemail, 'password':txtpassword, 'phoneNumber':txtphone, 'image':txtimage, 'type':txttype_no, 'uid': db.generate_key()}
+            try:
+                auth.create_user_with_email_and_password(txtemail, txtpassword)
+                db.child("users").push(data)
+                msg = 'New record created successfully' 
+            except:
+                msg = "Invalid mail or password"
+        
+    return msg
+
+
+@app.route("/ajax_update",methods=["POST","GET"])
+def ajax_update():
+    
+    if request.method == 'POST':
+        txtname = request.form['txtname']
+        txtemail = request.form['txtemail']
+        txtpassword = request.form['txtpassword']
+        txtphone = request.form['txtphone']
+        txtimage = request.form['txtimage']
+        txttype = request.form['txttype']
+        txtuid = request.form['txtuid']
+        txtkey = request.form['txtkey']
+      
+        if txttype == "cashier" or "Cashier": txttype_no = 1
+        elif txttype == "Costumer" or "costumer" or "Customer" or "customer": txttype_no = 0
+
+        db.child("users").child(txtkey).update({'name':txtname, 'email':txtemail, 'password':txtpassword, 'phoneNumber':txtphone, 'image':txtimage, 'type':txttype_no, 'uid':txtuid})
+        msg = 'Record successfully Updated'   
+    return msg  
+ 
+@app.route("/ajax_delete",methods=["POST","GET"])
+def ajax_delete():
+    
+    if request.method == 'POST':
+        getid = request.form['string']
+        db.child("users").child(getid).remove()
+        msg = 'Record deleted successfully'   
+    return msg
+
+
 
 
 if __name__ == "__main__":
