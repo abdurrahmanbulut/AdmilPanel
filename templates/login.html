@@ -3,18 +3,23 @@
 {% block body %}
 
 {% from "includes/formhelpers.html" import render_field %}
-<div style="display:flex; justify-content: center; width:100%">
-    <div>
-        <h3>Log in</h3>
-    <hr>
-    <form  method = "post">
-        {{ render_field(form.username) }}
-        {{ render_field(form.password) }}
-
-        <button type="submit" class="btn btn-warning">Log in</button>
-        <a type="submit" class="btn btn-secondary" href="/reset_password">Forgot Password</a>
-    </form>
+<div style="display:flex; justify-content: center; align-items:center; width:100%; position: absolute; top:60px; right:0px; bottom:0px;
+background-image: url(https://images.pexels.com/photos/7911758/pexels-photo-7911758.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260); background-position: center; ">
+    <div style=" padding: 4rem; background-color: #F5F5DC; border-radius:2rem;">
+        <div>
+            <h3>Log in</h3>
+        <hr>
+        <form  method = "post">
+            {{ render_field(form.username) }}
+            {{ render_field(form.password) }}
+    
+            <button type="submit" class="btn btn-warning">Log in</button>
+            <a type="submit" class="btn btn-secondary" href="/reset_password">Forgot Password</a>
+        </form>
+        </div>
     </div>
+
+    
 
 
 </div>
