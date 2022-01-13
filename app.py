@@ -1,7 +1,9 @@
 import pyrebase
-from flask import Flask, render_template, request, session, flash, url_for, redirect
+from flask import Flask, render_template, request, session, flash, url_for, redirect, jsonify, make_response
+
 from functools import wraps
 from wtforms import Form, StringField, PasswordField
+import json
 
 
 def login_required(f):
@@ -15,24 +17,27 @@ def login_required(f):
 
     return wrap
 
+app = Flask(__name__)
+app.secret_key = 'gtusoftwaregroceryapp'
 
 class Person:
-    def __init__(self, name, email, password, phone_number, image, type, uid, key):
+    def __init__(self, name, email, password, phoneNumber, image, type, key, wallet):
         self.name = name
         self.email = email
         self.password = password
-        self.phone_number = phone_number
+        self.phoneNumber = phoneNumber
         self.image = image
         self.type = type
-        self.uid = uid
         self.key = key
+        self.wallet = wallet
+
 
 class LoginForm(Form):
     username = StringField("Mail")
     password = PasswordField("Password")
 
 
-firebaseConfig = {
+firebaseConfigWeb = {
     'apiKey': "AIzaSyCTHK16qs1kP5O2I6GdNHV3IrAbZZj7DqA",
     'authDomain': "groceryadmin-5ac5b.firebaseapp.com",
     'databaseURL': "https://groceryadmin-5ac5b-default-rtdb.firebaseio.com",
@@ -43,7 +48,7 @@ firebaseConfig = {
 }
 
 # web
-firebaseConfigWeb = {
+firebaseConfig = {
     'apiKey': "AIzaSyAQdY2VV4QOR_7zGT1PpB1jMRLNKXEB19w",
     'authDomain': "high-lacing-330220.firebaseapp.com",
     'databaseURL': "https://high-lacing-330220-default-rtdb.firebaseio.com",
@@ -51,31 +56,37 @@ firebaseConfigWeb = {
     'storageBucket': "high-lacing-330220.appspot.com",
     'messagingSenderId': "41516160651",
     'appId': "1:41516160651:web:d9fd0340582463b28f268e",
-    'measurementId': "G-MGZZQ54S74"
+    'measurementId': "G-MGZZQ54S74",
+    'serviceAccount': "serviceAccountKey.json"
 }
 
 firebase = pyrebase.initialize_app(firebaseConfig)
 firebaseWeb = pyrebase.initialize_app(firebaseConfigWeb)
-db = firebaseWeb.database()
+db = firebase.database()
+
+
+authWeb = firebaseWeb.auth()
+auth = firebase.auth()
+storage = firebase.storage()
+
+
 
 user_list = []
 product_list = []
 
-print(db.child("users").get())
 
-def refreshUsers(db):
+
+def refresh_users(db):
     users_list = []
     users = db.child("users").get()
     for user in users.each():
-        users_list.append(Person(user.val()['name'], user.val()['email'], user.val()['password'], user.val()['phoneNumber'], user.val()['image'], user.val()['type'], user.val()['uid'], user.key()))
+        users_list.append(Person(user.val()['name'], user.val()['email'], user.val()['password'], user.val()['phoneNumber'], user.val()['image'], user.val()['type'], user.key(), user.val()['wallet']))
     return users_list
 
-user_list = refreshUsers(db)
 
-auth = firebase.auth()
+user_list = refresh_users(db)
 
-app = Flask(__name__)
-app.secret_key = 'gtusoftwaregroceryapp'
+
 
 
 @app.route("/")
@@ -85,10 +96,6 @@ def index():
 @app.route("/")
 def send_message():
     return "sent"
-
-@app.route("/about")
-def about():
-    return render_template("about.html")
 
 
 @app.route("/dashboard")
@@ -110,9 +117,9 @@ def login():
         email = form.username.data
         password = form.password.data
         try:
-            auth.sign_in_with_email_and_password(email, password)
+            authWeb.sign_in_with_email_and_password(email, password)
             session['logged_in'] = True
-            flash("You are at home")
+            flash("Successfully logged in!")
             return redirect(url_for("dashboard"))
         except:
             flash("Invalid email or password")
@@ -133,7 +140,7 @@ def reset_password():
     if request.method == 'POST':
         email = request.form['user_email']
         try:
-            auth.send_password_reset_email(email)
+            authWeb.send_password_reset_email(email)
             flash("Mail sent successfully")
             return redirect(url_for('dashboard'))
         except:
@@ -146,7 +153,7 @@ def reset_password():
 @app.route("/customers")
 @login_required
 def customers():
-    user_list = refreshUsers(db)
+    user_list = refresh_users(db)
     return render_template("customers.html", data=user_list)
 
 
@@ -158,55 +165,90 @@ def ajax_add():
         txtemail = request.form['txtemail']
         txtpassword = request.form['txtpassword']
         txtphone = request.form['txtphone']
-        txtimage = request.form['txtimage']
         txttype = request.form['txttype']
-        if txttype == "cashier" or "Cashier": txttype_no = 1
-        elif txttype == "Costumer" or "costumer" or "Customer" or "customer": txttype_no = 0 
+        txtkey = ""
+
+        if txttype == "cashier" or txttype == "Cashier": txttype_no = 1
+        elif txttype == "Costumer" or txttype == "costumer" or txttype == "Customer" or txttype == "customer": txttype_no = 0 
+        else : txttype_no = 0
         
         if txtname == '':
             msg = 'Please Input name'  
         else:        
-            data = {'name':txtname, 'email':txtemail, 'password':txtpassword, 'phoneNumber':txtphone, 'image':txtimage, 'type':txttype_no, 'uid': db.generate_key()}
+            data = {'name':txtname, 'email':txtemail, 'password':txtpassword, 'phoneNumber':txtphone, 'image': '', 'type':txttype_no, 'wallet': 0}
             try:
-                auth.create_user_with_email_and_password(txtemail, txtpassword)
-                db.child("users").push(data)
+                customer = auth.create_user_with_email_and_password(txtemail, txtpassword)
+                data.update({"uid": customer['localId']})
+                temp = db.child("users").push(data)
+                txtkey = temp['name']
                 msg = 'New record created successfully' 
             except:
                 msg = "Invalid mail or password"
-        
-    return msg
+                
+    result = msg + "," + txtkey
+    return result
 
-
+#storage.child("profiles").child("sdfdsadf").put("static/image/cart.png")
 @app.route("/ajax_update",methods=["POST","GET"])
 def ajax_update():
-    
+    msg = ""
+
     if request.method == 'POST':
         txtname = request.form['txtname']
         txtemail = request.form['txtemail']
         txtpassword = request.form['txtpassword']
         txtphone = request.form['txtphone']
-        txtimage = request.form['txtimage']
         txttype = request.form['txttype']
-        txtuid = request.form['txtuid']
         txtkey = request.form['txtkey']
-      
-        if txttype == "cashier" or "Cashier": txttype_no = 1
-        elif txttype == "Costumer" or "costumer" or "Customer" or "customer": txttype_no = 0
 
-        db.child("users").child(txtkey).update({'name':txtname, 'email':txtemail, 'password':txtpassword, 'phoneNumber':txtphone, 'image':txtimage, 'type':txttype_no, 'uid':txtuid})
-        msg = 'Record successfully Updated'   
-    return msg  
+        if txttype == "cashier" or "Cashier": txttype_no = 1
+        elif txttype == "Costumer" or "costumer" or "Customer" or "customer": txttype_no = 0 
+        else: txttype = 0
+
+        current_user = db.child("users").child(txtkey).get()
+        old_email = current_user.val()['email']
+        old_password = current_user.val()['password']
+
+        if old_password == txtpassword and old_email == txtemail:
+            try:
+                db.child("users").child(txtkey).update(
+                    {'name': txtname, 'phoneNumber': txtphone, 'type': txttype_no})
+                msg = 'Record successfully Updated'
+            except:
+                print("db is broken")
+        else:
+            try:
+
+                user = auth.sign_in_with_email_and_password(old_email, old_password)
+                auth.delete_user_account(user['idToken'])
+                newCustomer = auth.create_user_with_email_and_password(txtemail, txtpassword)
+                db.child("users").child(txtkey).update(
+                    {'name': txtname, 'email': txtemail, 'password': txtpassword, 'phoneNumber': txtphone,
+                      'type': txttype, 'uid': newCustomer['localId']})
+            except:
+                msg = "Invalid Email/Password"
+    
+    return msg
  
 @app.route("/ajax_delete",methods=["POST","GET"])
 def ajax_delete():
-    
+    msg = ""
     if request.method == 'POST':
-        getid = request.form['string']
+
+        getid = request.form['userKey']
+        email = db.child("users").child(getid).get().val()["email"]
+        password = db.child("users").child(getid).get().val()["password"]
+        
+        try:
+            user = auth.sign_in_with_email_and_password(email, password)
+            auth.delete_user_account(user['idToken'])
+        except:
+            print("user deleted just from database")
+
         db.child("users").child(getid).remove()
-        msg = 'Record deleted successfully'   
+        msg = 'Record deleted successfully'
+        
     return msg
-
-
 
 
 if __name__ == "__main__":
