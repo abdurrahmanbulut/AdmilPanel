@@ -22,15 +22,16 @@ img {margin-bottom: -8px;}
 }
 
 </style>
-<body class="w3-content w3-black" style="max-width:1500px;">
+<body class="w3-content w3-black" style="max-width: 2000px;">
 {% include "includes/navbar.html" %}
 
     {% include "includes/messages.html" %}
+    <p id="responseForm"></p>
 <!-- Header with Slideshow -->
 <header id="home" class="w3-display-container w3-center">
   <button class="w3-button w3-block w3-green w3-hide-large w3-hide-medium" onclick="document.getElementById('download').style.display='block'">Download <i class="fa fa-android"></i> <i class="fa fa-apple"></i> <i class="fa fa-windows"></i></button>
   <div class="mySlides w3-animate-opacity">
-    <img class="w3-image" src="/static/image/phone.png" alt="Image 1" style="min-width:500px" width="1500" height="1000">
+    <img class="w3-image" src="/static/image/phone.png" alt="Image 1" style="min-width:500px" width="2000" height="1000">
     <div class="w3-display-left w3-padding w3-hide-small" style="width:35%">
       <div class="w3-black w3-opacity w3-hover-opacity-off w3-padding-large w3-round-large">
         <h1 class="w3-xlarge">Do the sopping with our app</h1>
@@ -251,17 +252,20 @@ img {margin-bottom: -8px;}
 <div class="w3-container w3-light-grey" style="padding:128px 16px" id="contact">
   <h3 class="w3-center">CONTACT</h3>
   <p class="w3-center w3-large">Lets get in touch. Send us a message:</p>
-  <div style="margin-top:48px">
+  <div style="margin-top:72px; padding: 0rem 20rem 0rem 20rem">
     <p><i class="fa fa-map-marker fa-fw w3-xxlarge w3-margin-right"></i> Gebze Technical University / Kocaeli</p>
     <p><i class="fa fa-envelope fa-fw w3-xxlarge w3-margin-right"> </i> Email: groceryappofficial@gmail.com</p>
     <br>
-    <form action="/send_message">
+    <form action="https://formsubmit.co/abdrrhmnbulut@gmail.com" method="POST">
       <p><input class="w3-input w3-border" type="text" placeholder="Name" required name="Name"></p>
-      <p><input class="w3-input w3-border" type="text" placeholder="Email" required name="Email"></p>
-      <p><input class="w3-input w3-border" type="text" placeholder="Subject" required name="Subject"></p>
+      <p><input class="w3-input w3-border" type="text" placeholder="Email" name="Email"></p>
+      <p><input class="w3-input w3-border" type="text" placeholder="Subject" name="Subject"></p>
       <p><input class="w3-input w3-border" type="text" placeholder="Message" required name="Message"></p>
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="http://127.0.0.1:5000/">
+      <input type="hidden" name="_template" value="table">
       <p>
-        <button class="w3-button w3-black" type="submit">
+        <button id="sendForm" class="w3-button w3-black" type="submit">
           <i class="fa fa-paper-plane"></i> SEND MESSAGE
         </button>
       </p>
@@ -280,6 +284,8 @@ img {margin-bottom: -8px;}
 </footer>
 
 <script>
+  
+  
 // Slideshow
 var slideIndex = 1;
 showDivs(slideIndex);
@@ -298,7 +304,10 @@ function showDivs(n) {
   }
   x[slideIndex-1].style.display = "block";  
 }
+
 </script>
 
 </body>
+
+
 </html>
