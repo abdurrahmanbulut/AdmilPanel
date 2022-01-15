@@ -75,12 +75,12 @@ user_list = []
 product_list = []
 
 
-
 def refresh_users(db):
     users_list = []
     users = db.child("users").get()
     for user in users.each():
-        users_list.append(Person(user.val()['name'], user.val()['email'], user.val()['password'], user.val()['phoneNumber'], user.val()['image'], user.val()['type'], user.key(), user.val()['wallet']))
+        userImage = storage.child("profiles/" + user.key()).get_url(user.key())
+        users_list.append(Person(user.val()['name'], user.val()['email'], user.val()['password'], user.val()['phoneNumber'], userImage, user.val()['type'], user.key(), user.val()['wallet']))
     return users_list
 
 
@@ -249,6 +249,17 @@ def ajax_delete():
         msg = 'Record deleted successfully'
         
     return msg
+
+
+@app.route("/ajax_get_url",methods=["POST","GET"])
+def ajax_get_url():
+    
+    if request.method == 'POST':
+
+        getUrl = request.form['imageUrl']
+        print(getUrl)
+        
+    return "loaded"
 
 
 if __name__ == "__main__":

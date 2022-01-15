@@ -155,7 +155,9 @@ display: none;
   height: 2.5rem;
 }
 
-
+.image-border{
+  border-radius: 0.8rem;
+}
 
 
 
