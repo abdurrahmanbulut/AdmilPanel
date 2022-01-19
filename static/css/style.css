@@ -1,4 +1,4 @@
-*{
+* {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -8,32 +8,29 @@ body {
   margin: 0;
 }
 
-form{
-    width: auto;
-    height: auto;
-    margin-top: 2rem;
-    padding: 5rem;
-    background-color: #FFBF00;
-    border-radius: 2rem;
+form {
+  width: auto;
+  height: auto;
+  margin-top: 2rem;
+  padding: 5rem;
+  background-color: #ffbf00;
+  border-radius: 0.7rem 0.7rem 10rem 0.7rem;
 }
-.white-box{
-    width: auto;
-    height: auto;
-    background-color: white;
-    border-radius: 2rem;
-    padding: 5rem;
+.white-box {
+  width: auto;
+  height: auto;
+  background-color: white;
+  border-radius: 2rem;
+  padding: 5rem;
 }
-.primary-color{
-    height: 100vh; background-color: white;
+.primary-color {
+  height: 100vh;
+  background-color: white;
 }
-#back-img{
-    background-image: url("https://images.pexels.com/photos/7799685/pexels-photo-7799685.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940");
+#back-img {
+  background-image: url("https://images.pexels.com/photos/7799685/pexels-photo-7799685.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940");
 }
-img{
-    width: 3rem;
-    height: 3rem;
-    text-align: center;
-}
+
 table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
@@ -41,26 +38,26 @@ table {
   table-layout: fixed;
 }
 
-td, th {
+td,
+th {
   border: 1px solid #dddddd;
   text-align: center;
   padding: 2px;
-  
+
   overflow: hidden;
 }
 tr:nth-child(even) {
   background-color: #dddddd;
 }
-footer {
-    background-color: black;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color:#FFBF00;
-    clear: both;
-    position: relative;
-    height: 100px;
-    margin-top: 100px;
+.costumer-footer {
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ffbf00;
+  height: 100px;
+
+  width: 100%;
 }
 
 .table-title {
@@ -73,24 +70,25 @@ footer {
 }
 .table-title .add-new {
   float: right;
-height: 30px;
-font-weight: bold;
-font-size: 12px;
-text-shadow: none;
-min-width: 100px;
-border-radius: 50px;
-line-height: 13px;
+  height: 30px;
+  font-weight: bold;
+  font-size: 12px;
+  text-shadow: none;
+  min-width: 100px;
+  border-radius: 50px;
+  line-height: 13px;
 }
 .table-title .add-new i {
-margin-right: 4px;
+  margin-right: 4px;
 }
-td{
+td {
   text-align: center;
 }
 table.table {
   table-layout: fixed;
 }
-table.table tr th, table.table tr td {
+table.table tr th,
+table.table tr td {
   border-color: #e9e9e9;
 }
 table.table th i {
@@ -102,29 +100,29 @@ table.table th:last-child {
   width: 100px;
 }
 table.table td a {
-cursor: pointer;
+  cursor: pointer;
   display: inline-block;
   margin: 0 5px;
-min-width: 24px;
-}   
+  min-width: 24px;
+}
 table.table td a.add {
-  color: #27C46B;
+  color: #27c46b;
 }
 table.table td a.edit {
-  color: #FFC107;
+  color: #ffc107;
 }
 table.table td a.delete {
-  color: #E34724;
+  color: #e34724;
 }
 table.table td i {
   font-size: 19px;
 }
 table.table td a.add i {
   font-size: 24px;
-margin-right: -1px;
+  margin-right: -1px;
   position: relative;
   top: 3px;
-}    
+}
 table.table .form-control {
   height: 32px;
   line-height: 11px;
@@ -132,37 +130,42 @@ table.table .form-control {
   border-radius: 4px;
 }
 table.table .form-control.error {
-border-color: #f50000;
+  border-color: #f50000;
 }
 table.table td .add {
-display: none;
+  display: none;
 }
-.container{
+.container {
   margin-top: 4rem;
   width: 100%;
 }
 
-.hidetext { -webkit-text-security: disc; /* Default */ }
-
-
+.hidetext {
+  -webkit-text-security: disc; /* Default */
+}
 
 .profile-pic {
   max-width: 200px;
   max-height: 200px;
   display: block;
 }
-#txtimage, #txtname, #txtemail, #txtphone, #txttype, #txtpassword {
+#txtimage,
+#txtname,
+#txtemail,
+#txtphone,
+#txttype,
+#txtpassword {
   height: 2.5rem;
 }
 
-.image-border{
-  border-radius: 0.8rem;
+.image-border {
+  border-radius: 1rem;
 }
 
-
-
-
-
+.image-size {
+  width: 25%;
+  height: 100%;
+}
 
 /* Button used to open the contact form - fixed at the bottom of the page */
 .open-button {
@@ -193,7 +196,7 @@ display: none;
 }
 
 /* Full-width input fields */
-.form-container input[type=file]{
+.form-container input[type="file"] {
   width: 100%;
   padding: 15px;
   border-radius: 1rem;
@@ -202,17 +205,15 @@ display: none;
   background: #f1f1f1;
 }
 
-
-
 /* Set a style for the submit/login button */
 .form-container .btn {
-  background-color: #04AA6D;
+  background-color: #04aa6d;
   color: white;
   padding: 16px 20px;
   border: none;
   cursor: pointer;
   width: 100%;
-  margin-bottom:10px;
+  margin-bottom: 10px;
   opacity: 0.8;
 }
 
@@ -222,10 +223,10 @@ display: none;
 }
 
 /* Add some hover effects to buttons */
-.form-container .btn:hover, .open-button:hover {
+.form-container .btn:hover,
+.open-button:hover {
   opacity: 1;
 }
-
 
 #upload-photo {
   opacity: 0;
@@ -236,4 +237,68 @@ display: none;
 label {
   cursor: pointer;
   /* Style as you please, it will become the visible UI component. */
+}
+
+#the-team {
+  display: flex;
+}
+
+.members {
+  width: 20%;
+}
+.w3-card {
+  height: 100%;
+}
+.w3-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+.member-name {
+  height: 4rem;
+}
+.form-contact {
+  margin-top: 72px;
+  padding: 0rem 20rem 0rem 20rem;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: "Poppins", sans-serif;
+}
+body {
+  font-size: 16px;
+}
+img {
+  margin-bottom: -8px;
+}
+.mySlides {
+  display: none;
+}
+@media (max-width: 992px) {
+  #the-team {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+  }
+  .members {
+    width: 100%;
+  }
+  .form-contact {
+    margin-top: 72px;
+    padding: 0rem;
+  }
+}
+
+.edit-table-flex {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
 }

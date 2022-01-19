@@ -22,128 +22,134 @@
     <script src="{{ url_for('static', filename='action.js')}}"></script>
   </head>
 
-  <body>
+  <body style="min-height: 100vh">
     {% include "includes/navbar.html" %} {% include "includes/messages.html" %}
 
-    <!-- Editable table -->
-    <div class="container">
-      <div class="table-title">
-        <div class="row">
-          <div class="col-sm-8">
-            <h2>Customer <b>Details</b></h2>
-          </div>
-          <div class="col-sm-4">
-            <button type="button" class="btn btn-info add-new btn-warning">
-              <i class="fa fa-plus"></i> Add New
-            </button>
-          </div>
-
-          <div
-            class="btn btn-info btn-warning"
-            id="displaymessage"
-            style="display: none; width: 100%; margin-top: 10px"
-          ></div>
-        </div>
-      </div>
-
-      <input id="myInput" type="text" placeholder="Search.." />
-      <br /><br />
-      <table class="table table-bordered" id="myTable">
-        <thead>
-          <tr>
-            <th style="width: 30%">Image</th>
-            <th style="width: 30%">Name</th>
-            <th style="width: 30%">Email</th>
-            <th style="width: 20%">Phone</th>
-            <th style="width: 15%">Password</th>
-            <th style="width: 15%">Person type</th>
-            <th style="width: 15%">Money</th>
-            <th style="width: 15%">Options</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {% for row in data %}
-          <tr id="{{row.key}}">
-            <td>
-              <button
-                class="imageUpload"
-                style="background-color: transparent; border: none"
-              >
-                {% if row.image %}<img class="image-border"
-                  src="{{row.image}}"
-                  alt="Costumer image"
-                />{% else %}
-                <img 
-                  src="../static/image/anonymous.png"
-                  alt="Anonym Costumer image"
-                />{% endif %}
+    <div class="edit-table-flex">
+      <!-- Editable table -->
+      <div class="container">
+        <div class="table-title">
+          <div class="row">
+            <div class="col-sm-8">
+              <h2>Customer <b>Details</b></h2>
+            </div>
+            <div class="col-sm-4">
+              <button type="button" class="btn btn-info add-new btn-warning">
+                <i class="fa fa-plus"></i> Add New
               </button>
+            </div>
 
-              <div class="imageInput" style="display: none">
-                <div>
+            <div
+              class="btn btn-info btn-warning"
+              id="displaymessage"
+              style="display: none; width: 100%; margin-top: 10px"
+            ></div>
+          </div>
+        </div>
+
+        <input id="myInput" type="text" placeholder="Search.." />
+        <br /><br />
+        <table class="table table-bordered" id="myTable">
+          <thead>
+            <tr>
+              <th style="width: 30%">Image</th>
+              <th style="width: 30%">Name</th>
+              <th style="width: 30%">Email</th>
+              <th style="width: 20%">Phone</th>
+              <th style="width: 15%">Password</th>
+              <th style="width: 15%">Person type</th>
+              <th style="width: 15%">Money</th>
+              <th style="width: 15%">Options</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for row in data %}
+            <tr id="{{row.key}}">
+              <td>
+                <button
+                  class="imageUpload"
+                  style="background-color: transparent; border: none"
+                >
+                  {% if row.image %}<img
+                    class="image-border image-size"
+                    src="{{row.image}}"
+                    alt="Costumer image"
+                  />{% else %}
+                  <img class="image-size image-border"
+                    src="../static/image/anonymous.png"
+                    alt="Anonym Costumer image"
+                  />{% endif %}
+                </button>
+
+                <div class="imageInput" style="display: none">
                   <div>
-                    <label for="filetemp">Browse</label>
-                    <input
-                      style="opacity: 0; position: absolute; top: 0; right: 0"
-                      type="file"
-                      id="filetemp"
-                    />
-                    <div style="display: flex; justify-content: center">
-                      <button style="width: 4rem; margin-right: 0.5rem" id="">
-                        Upload
-                      </button>
-                      <button style="width: 4rem" class="cancelUpload">
-                        Close
-                      </button>
+                    <div>
+                      <label for="filetemp">Browse</label>
+                      <input
+                        style="opacity: 0; position: absolute; top: 0; right: 0"
+                        type="file"
+                        id="filetemp"
+                      />
+                      <div style="display: flex; justify-content: center">
+                        <button style="width: 4rem; margin-right: 0.5rem" id="">
+                          Upload
+                        </button>
+                        <button style="width: 4rem" class="cancelUpload">
+                          Close
+                        </button>
+                      </div>
+                    </div>
+                    <div>
+                      <p id=""></p>
+                      <progress
+                        style="width: 80%"
+                        value="0"
+                        max="100"
+                        id=""
+                      ></progress>
                     </div>
                   </div>
-                  <div>
-                    <p id=""></p>
-                    <progress
-                      style="width: 80%"
-                      value="0"
-                      max="100"
-                      id=""
-                    ></progress>
-                  </div>
                 </div>
-              </div>
-            </td>
-            <td>{% if row.name %}{{row.name}}{% else %}Unknown{% endif %}</td>
-            <td>{% if row.email %}{{row.email}}{% else %}Unknown{% endif %}</td>
-            <td>
-              {% if row.phoneNumber%}{{row.phoneNumber}}{% else %}Unknown{%
-              endif %}
-            </td>
-            <td class="hidetext">{{row.password}}</td>
-            <td>{% if row.type == 1 %}Cashier{% else %}Costumer{% endif %}</td>
-            <td>{{row.wallet}}</td>
-            <td>
-              <a class="add" title="Add" data-toggle="tooltip"
-                ><i class="fa fa-check"></i
-              ></a>
-              <a class="edit" title="Edit" data-toggle="tooltip"
-                ><i class="fa fa-pencil"></i
-              ></a>
-              <a class="delete" title="Delete" data-toggle="tooltip"
-                ><i class="fa fa-trash-o"></i
-              ></a>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      <p id="getImageUrl" class=""></p>
-    </div>
-
-    
-    <footer>
-      <div>
-        <span>Grocery app official</span>
-          <span>&#174;</span>
+              </td>
+              <td>{% if row.name %}{{row.name}}{% else %}Unknown{% endif %}</td>
+              <td>
+                {% if row.email %}{{row.email}}{% else %}Unknown{% endif %}
+              </td>
+              <td>
+                {% if row.phoneNumber%}{{row.phoneNumber}}{% else %}Unknown{%
+                endif %}
+              </td>
+              <td class="hidetext">{{row.password}}</td>
+              <td>
+                {% if row.type == 1 %}Cashier{% else %}Costumer{% endif %}
+              </td>
+              <td>{{row.wallet}}</td>
+              <td>
+                <a class="add" title="Add" data-toggle="tooltip"
+                  ><i class="fa fa-check"></i
+                ></a>
+                <a class="edit" title="Edit" data-toggle="tooltip"
+                  ><i class="fa fa-pencil"></i
+                ></a>
+                <a class="delete" title="Delete" data-toggle="tooltip"
+                  ><i class="fa fa-trash-o"></i
+                ></a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <p id="getImageUrl" class=""></p>
       </div>
-  </footer>
+
+      <footer class="costumer-footer">
+        <div>
+          <span>Grocery app official</span>
+          <span>&#174;</span>
+        </div>
+      </footer>
+    </div>
 
     <script src="https://www.gstatic.com/firebasejs/7.13.1/firebase.js"></script>
 
