@@ -2,7 +2,8 @@ import pyrebase
 from flask import Flask, render_template, request, session, flash, url_for, redirect, jsonify, make_response
 
 from functools import wraps
-from wtforms import Form, StringField, PasswordField
+from wtforms import Form, StringField, PasswordField, SelectField
+from flask_wtf import FlaskForm
 import json
 
 
@@ -32,9 +33,55 @@ class Person:
         self.wallet = wallet
 
 
+class Category:
+    def __init__(self, name, image):
+        self.name = name
+        self.image = image
+
+
+class SubCategory:
+
+    def __init__(self, name, category):
+        self.name = name
+        self.category = category
+
+
+class Product:
+    def __init__(self, name, stock, desc, id, discount, price, image, subcategory):
+        self.name = name
+        self.stock = stock
+        self.desc = desc
+        self.id = id
+        self.discount = discount
+        self.price = price
+        self.image = image
+        self.subcategory = subcategory
+
+
+class Promotion:
+    def __init__(self, name, desc, image):
+        self.name = name
+        self.desc = desc
+        self.image = image
+
+
+
 class LoginForm(Form):
     username = StringField("Mail")
     password = PasswordField("Password")
+
+
+class AddProduct(Form):
+    name = StringField("Product name")
+    price = StringField("Product price")
+    stock=StringField("Product stock")
+    description=StringField("Product description")
+
+class ProductForm(FlaskForm):
+    form_cat = SelectField('category', choices=[])
+    form_sub = SelectField('subcategory', choices=[])
+    form_prod = SelectField('product', choices=[])
+
 
 
 firebaseConfigWeb = {
@@ -70,9 +117,13 @@ auth = firebase.auth()
 storage = firebase.storage()
 
 
-
 user_list = []
+
+promotion_list = []
 product_list = []
+category_list = []
+sub_category_list = []
+
 
 
 def refresh_users(db):
@@ -104,10 +155,83 @@ def dashboard():
     return render_template("dashboard.html")
 
 
-@app.route("/products")
+@app.route("/products", methods=['GET', 'POST'])
 @login_required
 def products():
-    return render_template("products.html", data=product_list)
+    categories = db.child("categories").get()
+    categoriesJson=[]
+    for category in categories.each():
+        categoriesJson.append(category.val())
+
+    subCategoriesJson = []
+    productListJson = []
+    for item in categoriesJson:
+        cat = Category(item['name'], item['image'])
+        category_list.append(cat)
+        subCategoriesJson.append(item["subCategories"])
+        for subItem in item["subCategories"]:
+            sub_cat = SubCategory(subItem['name'], cat)
+            sub_category_list.append((sub_cat))
+            for product in subItem["productList"]:
+                prod = Product(product["name"], product["count"],product["desc"],
+                               product["id"], product["discount"],product["price"],
+                               product["image"], sub_cat)
+                product_list.append(prod)
+
+    form2 = AddProduct(request.form)
+    form = ProductForm()
+    form.form_cat.choices=[(category.name) for category in category_list]
+    form.form_sub.choices=[(subCategory.name) for subCategory in sub_category_list]
+    form.form_prod.choices=[(product.name) for product in product_list]
+
+    if request.method == 'POST':
+
+       if form2.name:
+           data={"name":form2.name.data, "price":form2.price.data, "count":form2.stock.data, "id":1, "desc":form2.description.data,"image":"","discount":0}
+           for category in categories:
+               if category.val()["name"] == form.form_cat.data:
+                   for sub in db.child("categories").child(category.key()).child("subCategories").get():
+                       if (sub.val()["name"] == form.form_sub.data):
+                           db.child("categories").child(category.key()).child("subCategories").child(sub.key()).child(
+                               "productList").push(data)
+
+       else:
+           for category in categories:
+               if category.val()["name"]==form.form_cat.data:
+                   for sub in db.child("categories").child(category.key()).child("subCategories").get():
+                      if(sub.val()["name"]==form.form_sub.data):
+                          for prodItem in db.child("categories").child(category.key()).child("subCategories").child(sub.key()).child("productList").get():
+                              if(prodItem.val()["name"]==form.form_prod.data):
+                                 db.child("categories").child(category.key()).child("subCategories").child(
+                                      sub.key()).child("productList").child(prodItem.key()).remove()
+
+
+
+
+    return render_template("products.html", form=form, product_list=product_list,form2=form2)
+
+@app.route('/subcategory/<get_cat>')
+def subcategorybycat(get_cat):
+    filteredSubCategories=[]
+    for subCategory in sub_category_list:
+        if(subCategory.category.name==get_cat):
+            print(subCategory.category.name)
+            filteredSubCategories.append(subCategory.name)
+
+    return  jsonify({'subcategory' : filteredSubCategories})
+
+
+@app.route('/product/<sub_cat>')
+def productbysubcat(sub_cat):
+    filteredProducts=[]
+    for prod in product_list:
+        if(prod.subcategory.name==sub_cat):
+            print(prod.subcategory.name)
+            filteredProducts.append(prod.name)
+
+    return  jsonify({'product' : filteredProducts})
+
+
 
 
 @app.route('/login', methods=['GET', 'POST'])
