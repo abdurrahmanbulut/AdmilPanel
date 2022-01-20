@@ -164,9 +164,7 @@ def products():
         categoriesJson.append(category.val())
 
     subCategoriesJson = []
-    productListJson = []
-    product_list = []
-    sub_category_list = []
+    
     category_list = []
     for item in categoriesJson:
         cat = Category(item['name'], item['image'])
