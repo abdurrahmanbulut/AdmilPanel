@@ -21,51 +21,55 @@
     <div class="row">
         <div class="col-md-12">
             <p>
-            <h2> PRODUCTS</h2></p>
+            <h2 style="text-align: center;"> MANAGE PRODUCTS</h2></p>
+            
+            <div style="display: flex; justify-content: space-between; width: 100%; padding: 0rem 4rem 0rem 4rem;" >
+                <div style="width: 48%;">
+                    <form method="POST" style="border-radius: 2rem;" >
 
+                        <h3>DELETE PRODUCT</h3>
+                        {{form.srf_token}}
+                        <div class="form-group">
+                            <label for="email">Category</label>
+                            {{form.form_cat(class="form-control")}}
+                        </div>
+                        <div class="form-group">
+                            <label for="email">SubCategory</label>
+                            {{form.form_sub(class="form-control")}}
+                        </div>
+                        <div class="form-group">
+                            <label for="email">PRODUCT</label>
+                            {{form.form_prod(class="form-control")}}
+                        </div>
+                        <input type="submit" class="btn btn-success" value="Delete" btn-lg>
+                        <div style="height: 11.7rem;">
 
-            <form method="POST">
-
-                <h3>DELETE PRODUCT</h3>
-                {{form.srf_token}}
-                <div class="form-group">
-                    <label for="email">Category</label>
-                    {{form.form_cat(class="form-control")}}
+                        </div>
+                    </form>
+                    
                 </div>
-                <div class="form-group">
-                    <label for="email">SubCategory</label>
-                    {{form.form_sub(class="form-control")}}
+                <div style="width: 48%;" >
+                    {% from "includes/formhelpers.html" import render_field %}
+                    <form  method = "POST" style="border-radius: 2rem;">
+                         <h3>ADD PRODUCT</h3>
+                         {{form.srf_token}}
+                         <div class="form-group">
+                             <label for="email">Category</label>
+                             {{form.form_cat(class="form-control")}}
+                         </div>
+                         <div class="form-group">
+                             <label for="email">SubCategory</label>
+                             {{form.form_sub(class="form-control")}}
+                         </div>
+                     {{ render_field(form2.name) }}
+                     {{ render_field(form2.price) }}
+                     {{ render_field(form2.stock) }}
+                     {{ render_field(form2.description) }}
+         
+                 <button type="submit" class="btn btn-success">ADD PRODUCT</button>
+             </form>
                 </div>
-                <div class="form-group">
-                    <label for="email">PRODUCT</label>
-                    {{form.form_prod(class="form-control")}}
-                </div>
-                <input type="submit" class="btn btn-success" value="Delete" btn-lg>
-
-            </form>
-
-
-    {% from "includes/formhelpers.html" import render_field %}
-           <form  method = "POST">
-                <h3>ADD PRODUCT</h3>
-                {{form.srf_token}}
-                <div class="form-group">
-                    <label for="email">Category</label>
-                    {{form.form_cat(class="form-control")}}
-                </div>
-                <div class="form-group">
-                    <label for="email">SubCategory</label>
-                    {{form.form_sub(class="form-control")}}
-                </div>
-            {{ render_field(form2.name) }}
-            {{ render_field(form2.price) }}
-            {{ render_field(form2.stock) }}
-            {{ render_field(form2.description) }}
-
-        <button type="submit" class="btn btn-success">ADD PRODUCT</button>
-    </form>
-
-
+            </div>
         </div>
     </div>
 
@@ -82,7 +86,7 @@
                      style="display:none;width:100%;margin-top:10px;"></div>
             </div>
         </div>
-
+        <input id="myInput" type="text" placeholder="Search.." /> <br>
         <table class="table table-bordered" id="myTable">
             <thead>
             <tr>
@@ -127,6 +131,7 @@
         </table>
 
     </div>
+    
 
       <footer class="costumer-footer">
         <div>
@@ -134,7 +139,7 @@
           <span>&#174;</span>
         </div>
       </footer>
-    </div>
+</div>
 
 <script>
 category_select = document.getElementById('form_cat');

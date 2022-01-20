@@ -165,6 +165,9 @@ def products():
 
     subCategoriesJson = []
     productListJson = []
+    product_list = []
+    sub_category_list = []
+    category_list = []
     for item in categoriesJson:
         cat = Category(item['name'], item['image'])
         category_list.append(cat)
@@ -185,15 +188,18 @@ def products():
     form.form_prod.choices=[(product.name) for product in product_list]
 
     if request.method == 'POST':
-
-       if form2.name:
-           data={"name":form2.name.data, "price":form2.price.data, "count":form2.stock.data, "id":1, "desc":form2.description.data,"image":"","discount":0}
+       lenght = 0
+       if form2.name.data:
+           data = {"name": form2.name.data, "price": int(form2.price.data), "count": int(form2.stock.data), "id": 1,
+                   "desc": form2.description.data, "image": "", "discount": 0}
            for category in categories:
                if category.val()["name"] == form.form_cat.data:
                    for sub in db.child("categories").child(category.key()).child("subCategories").get():
                        if (sub.val()["name"] == form.form_sub.data):
-                           db.child("categories").child(category.key()).child("subCategories").child(sub.key()).child(
-                               "productList").push(data)
+                            for x in db.child("categories").child(category.key()).child("subCategories").child(sub.key()).child("productList").get():
+                                lenght=lenght+1
+                            db.child("categories").child(category.key()).child("subCategories").child(sub.key()).child(
+                              "productList").child(str(lenght)).set(data)
 
        else:
            for category in categories:
