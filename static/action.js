@@ -19,7 +19,7 @@ $(document).ready(function(){
         $(this).attr("disabled", "disabled");
         var index = $("table tbody tr:first-child").index();
         var row = '<tr>' +
-            '<td><img src="../static/image/anonymous.png" alt="Costumer image"></td> ' +
+            '<td><img height="60" src="../static/image/anonymous.png" alt="Costumer image"></td> ' +
             '<td><input type="text" class="form-control" name="name" id="txtname"></td>' +
             '<td><input type="text" class="form-control" name="email" id="txtemail"></td>' +
             '<td><input type="text" class="form-control" name="phone" id="txtphone"></td>' +
